@@ -1,0 +1,4 @@
+baseURL = 'https://maps.hatamoto.pl/'
+languageCode = 'en-us'
+title = 'Mapy, jakie są, każdy widzi'
+theme = 'PaperMod'
