@@ -87,7 +87,7 @@ spec:
 			checkout([$class: 'GitSCM', 
 				  branches: [[name: '*/main']], 
 				  extensions: [[$class: 'CloneOption', depth: 1, shallow: true]],
-				  userRemoteConfigs: [[url: 'git@github.com:lvajxi03/patches.git',
+				  userRemoteConfigs: [[url: 'https://github.com/lvajxi03/patches.git',
 						       credentialsId: 'github-first-token']]
 			])
 		    }
