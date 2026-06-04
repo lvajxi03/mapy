@@ -136,7 +136,11 @@ spec:
 					    configFile(fileId: env.VARS_DEBIAN_ID, variable: 'V_DEBIAN'),
 					    configFile(fileId: env.HOST_VARS_ID, variable: 'V_HOST_SPECIFIC'),
 					    configFile(fileId: env.VAULT_ID, variable: 'V_VAULT')]) {
-			    sshagent(credentials: ['ansible-ssh']) {
+			    withCredentials([sshUserPrivateKey(
+				credentialsId: 'ansible-ssh',
+				keyFileVariable: 'SSH_KEY',
+				usernameVariable: 'SSH_USER')]) {
+				sh "chmod 600 $SSH_KEY"
 				// Przygotowanie struktury dla Ansible
 				sh "mkdir -p group_vars/all host_vars"
 				sh "cp ${V_ALPINE} group_vars/alpine_servers.yml"
@@ -152,7 +156,9 @@ spec:
                         --vault-password-file ${VAULT_PASS} \
                         -l ${env.TARGET_HOST} \
                         -e 'app_package_local_path=${WORKSPACE}/${PACKAGE_NAME}' \
-                        -e 'app_web_root=${env.WEB_ROOT}'
+                        -e 'app_web_root=${env.WEB_ROOT}' \
+                        --private-key ${SSH_KEY} \
+                        -u ${SSH_USER}
                         """
 			    }
 			}
