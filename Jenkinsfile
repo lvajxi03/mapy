@@ -49,6 +49,21 @@ spec:
     }
 
     stages {
+
+	stage('Setup Environment') {
+	    steps {
+		container('maps-ansible-builder') {
+		    configFileProvider([
+			configFile(fileId: env.KNOWN_HOSTS, variable: 'V_KNOWN_HOSTS')]) {
+			// Przygotowanie .ssh/known_hosts:
+			sh "mkdir -p ~/.ssh"
+			sh "cp ${V_KNOWN_HOSTS} ~/.ssh/known_hosts"
+			sh "chmod 700 ~/.ssh"
+			sh "chmod 600 ~/.ssh/known_hosts"
+		    }
+		}
+	    }
+	}
 	
 	stage('Checkout Ansible Library') {
 	    steps {
@@ -115,21 +130,14 @@ spec:
 			}
 
 			// KROK 2: Pobranie wszystkich zmiennych i wdrożenie
-			configFileProvider([
-                            configFile(fileId: env.INVENTORY_ID, variable: 'INV_PATH'),
-                            configFile(fileId: env.VAULT_PASS_ID, variable: 'VAULT_PASS'),
-                            configFile(fileId: env.VARS_ALPINE_ID, variable: 'V_ALPINE'),
-                            configFile(fileId: env.VARS_DEBIAN_ID, variable: 'V_DEBIAN'),
-                            configFile(fileId: env.HOST_VARS_ID, variable: 'V_HOST_SPECIFIC'),
-			    configFile(fileId: env.VAULT_ID, variable: 'V_VAULT'),
-			    configFile(fileId: env.KNOWN_HOSTS, variable: 'V_KNOWN_HOSTS')
-			]) {
+			configFileProvider([configFile(fileId: env.INVENTORY_ID, variable: 'INV_PATH'),
+					    configFile(fileId: env.VAULT_PASS_ID, variable: 'VAULT_PASS'),
+					    configFile(fileId: env.VARS_ALPINE_ID, variable: 'V_ALPINE'),
+					    configFile(fileId: env.VARS_DEBIAN_ID, variable: 'V_DEBIAN'),
+					    configFile(fileId: env.HOST_VARS_ID, variable: 'V_HOST_SPECIFIC'),
+					    configFile(fileId: env.VAULT_ID, variable: 'V_VAULT')]) {
 			    sshagent(credentials: ['ansible-ssh']) {
 				// Przygotowanie struktury dla Ansible
-				sh "mkdir -p ~/.ssh"
-				sh "cp ${V_KNOWN_HOSTS} ~/.ssh/known_hosts"
-				sh "chmod 700 ~/.ssh"
-				sh "chmod 600 ~/.ssh/known_hosts"
 				sh "mkdir -p group_vars/all host_vars"
 				sh "cp ${V_ALPINE} group_vars/alpine_servers.yml"
 				sh "cp ${V_DEBIAN} group_vars/debian_servers.yml"
