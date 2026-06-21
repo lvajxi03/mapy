@@ -73,7 +73,7 @@ spec:
 				  branches: [[name: '*/main']], 
 				  extensions: [[$class: 'CloneOption', depth: 1, shallow: true]],
 				  userRemoteConfigs: [[url: 'https://github.com/lvajxi03/ansible.git',
-						       credentialsId: 'github-first-token']]
+						       credentialsId: 'github-master-credentials']]
 			])
 		    }
 		}
@@ -88,7 +88,7 @@ spec:
 				  branches: [[name: '*/main']], 
 				  extensions: [[$class: 'CloneOption', depth: 1, shallow: true]],
 				  userRemoteConfigs: [[url: 'https://github.com/lvajxi03/patches.git',
-						       credentialsId: 'github-first-token']]
+						       credentialsId: 'github-master-credentials']]
 			])
 		    }
 		}
